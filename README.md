@@ -4,6 +4,8 @@ Todo Backend
 - [Overview](#overview)
 - [Routes](#routes)
 - [Usage](#usage)
+  - [Starting the Server](#starting-the-server)
+  - [Formatting](#formatting)
   - [Fetching Data](#fetching-data)
   - [Sending Data](#sending-data)
 - [Persistence](#persistence)
@@ -29,6 +31,21 @@ The app supports a single route at the moment, `/todos`. One can either `GET`
 from this endpoint or `POST` to it.
 
 ## Usage
+
+### Starting the server
+Once compiled, you need only have the `todo` binary. To start the server,
+navigate the the directory where the compiled binary lives and run the following
+commands.
+
+```bash
+$ cd /directory/where/todo/lives
+$ ./todo
+```
+
+The server will now be listening on port 80 until you hit CTRL+C to terminate
+terminate it.
+
+### Formatting
 JSON data should be formatted according the the [JSON API Specification][jsonspec].
 
 ### Fetching Data
