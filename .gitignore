@@ -1,2 +1,10 @@
+### IDE Files ###
 .idea
+
+### Binaries ###
 todo
+bin
+
+### Archives ###
+*.zip
+*.tar.gz
