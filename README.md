@@ -33,17 +33,18 @@ from this endpoint or `POST` to it.
 ## Usage
 
 ### Starting the server
-Once compiled, you need only have the `todo` binary. To start the server,
-navigate the the directory where the compiled binary lives and run the following
-commands.
+Once compiled, you need only have the `todo` binary on the system. To start the
+server, navigate the the directory where the compiled binary lives and run the
+following commands.
 
 ```bash
 $ cd /directory/where/todo/lives
-$ ./todo
+$ ./todo -port 3000
 ```
 
-The server will now be listening on port 80 until you hit CTRL+C to terminate
-terminate it.
+The server will now be listening on port 3000 until you hit CTRL+C to terminate
+terminate it. You may specify any port number you wish. Conventionally, live web
+services run on port 80. The default is 8080.
 
 ### Formatting
 JSON data should be formatted according the the [JSON API Specification][jsonspec].
