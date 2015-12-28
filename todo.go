@@ -65,6 +65,9 @@ func ListTodos(w http.ResponseWriter, r *http.Request) {
 		todoInterface[i] = todo
 	}
 
+	w.WriteHeader(http.StatusFound)
+	w.Header().Set("Content-Type", "application/vnd.api+json")
+
 	if err := jsonapi.MarshalManyPayload(w, todoInterface); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
