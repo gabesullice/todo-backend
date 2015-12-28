@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/julienschmidt/httprouter"
 	"github.com/shwoodard/jsonapi"
 	"log"
@@ -10,6 +11,8 @@ import (
 var todos []*Todo
 var serial int = 0
 
+var listen string
+
 type Todo struct {
 	Id    int    `jsonapi:"primary,todos"`
 	Title string `jsonapi:"attr,title"`
@@ -17,15 +20,19 @@ type Todo struct {
 	Done  bool   `jsonapi:"attr,done"`
 }
 
+func init() {
+	flag.StringVar(&listen, "port", "8080", "The port on which this application should listen for connections")
+	flag.Parse()
+}
+
 func main() {
 	r := httprouter.New()
 	r.POST("/todos", AddTodo)
 	r.GET("/todos", ListTodos)
 
-	err := http.ListenAndServe(":8080", r)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
+	log.Printf("Awaiting connections on port %s ...", listen)
+
+	log.Fatal("ListenAndServe: ", http.ListenAndServe(":"+listen, r))
 }
 
 func AddTodo(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
