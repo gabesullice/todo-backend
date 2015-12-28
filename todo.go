@@ -6,6 +6,7 @@ import (
 	"github.com/shwoodard/jsonapi"
 	"log"
 	"net/http"
+	"time"
 )
 
 var todos []*Todo
@@ -27,15 +28,15 @@ func init() {
 
 func main() {
 	r := httprouter.New()
-	r.POST("/todos", AddTodo)
-	r.GET("/todos", ListTodos)
+	r.HandlerFunc("POST", "/todos", Logger(AddTodo, "AddTodo"))
+	r.HandlerFunc("GET", "/todos", Logger(ListTodos, "ListTodos"))
 
 	log.Printf("Awaiting connections on port %s ...", listen)
 
 	log.Fatal("ListenAndServe: ", http.ListenAndServe(":"+listen, r))
 }
 
-func AddTodo(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func AddTodo(w http.ResponseWriter, r *http.Request) {
 	todo := new(Todo)
 
 	if err := jsonapi.UnmarshalPayload(r.Body, todo); err != nil {
@@ -57,7 +58,7 @@ func AddTodo(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 }
 
-func ListTodos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func ListTodos(w http.ResponseWriter, r *http.Request) {
 	todoInterface := make([]interface{}, len(todos))
 
 	for i, todo := range todos {
@@ -75,4 +76,20 @@ func saveTodo(todo *Todo) error {
 	serial++
 	todos = append(todos, todo)
 	return nil
+}
+
+func Logger(inner http.HandlerFunc, name string) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		inner(w, r)
+
+		log.Printf(
+			"%s\t%s\t%s\t%s",
+			r.Method,
+			r.RequestURI,
+			name,
+			time.Since(start),
+		)
+	})
 }
