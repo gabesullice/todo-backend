@@ -11,6 +11,9 @@ version=0.0.1
 
 release: $(DIST)/$(version)-windows-$(ARCH).zip $(DIST)/$(version)-darwin-$(ARCH).tar.gz $(DIST)/$(version)-linux-$(ARCH).tar.gz
 
+clean:
+	rm -rf {$(BIN),$(DIST)}/*
+
 $(DIST)/$(version)-windows-$(ARCH).zip: $(BIN)/$(version)-windows-$(ARCH).exe
 	zip $@ $? $(README)
 
