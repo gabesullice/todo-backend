@@ -8,3 +8,6 @@ bin
 ### Archives ###
 *.zip
 *.tar.gz
+
+### Database ###
+*.db
