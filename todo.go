@@ -43,8 +43,8 @@ func main() {
 	})
 
 	r := httprouter.New()
-	r.HandlerFunc("POST", "/todos", Logger(AddTodo, "AddTodo"))
-	r.HandlerFunc("GET", "/todos", Logger(ListTodos, "ListTodos"))
+	r.HandlerFunc("POST", "/todos", Logger(Headers(AddTodo), "AddTodo"))
+	r.HandlerFunc("GET", "/todos", Logger(Headers(ListTodos), "ListTodos"))
 
 	log.Printf("Awaiting connections on port %s ...", listen)
 
@@ -65,7 +65,6 @@ func AddTodo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("Content-Type", "application/vnd.api+json")
 
 	if err := jsonapi.MarshalOnePayload(w, todo); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -82,7 +81,6 @@ func ListTodos(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusFound)
-	w.Header().Set("Content-Type", "application/vnd.api+json")
 
 	if err := jsonapi.MarshalManyPayload(w, todos); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -135,6 +133,15 @@ func saveTodo(todo *Todo) error {
 			// Persist bytes to users bucket.
 			return b.Put(itob(todo.Id), buf)
 		})
+	})
+}
+
+func Headers(inner http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.Header().Set("Content-Type", "application/vnd.api+json")
+		inner(w, r)
+		w.Header().Write(w)
 	})
 }
 
