@@ -1,33 +1,38 @@
 BIN=bin
 DIST=dist
+
 PKG=github.com/gabesullice/todo
-README=README.md
+NAME=todo
+
 WINOS=windows
 MACOS=darwin
 LNXOS=linux
+
 ARCH=amd64
 
-version=0.0.2
+README=README.md
 
-release: $(DIST)/$(version)-windows-$(ARCH).zip $(DIST)/$(version)-darwin-$(ARCH).tar.gz $(DIST)/$(version)-linux-$(ARCH).tar.gz
+version=0.1.0
+
+release: $(DIST)/$(NAME)-$(version)-windows-$(ARCH).zip $(DIST)/$(NAME)-$(version)-darwin-$(ARCH).tar.gz $(DIST)/$(NAME)-$(version)-linux-$(ARCH).tar.gz
 
 clean:
 	rm -rf {$(BIN),$(DIST)}/*
 
-$(DIST)/$(version)-windows-$(ARCH).zip: $(BIN)/$(version)-windows-$(ARCH).exe
+$(DIST)/$(NAME)-$(version)-windows-$(ARCH).zip: $(BIN)/$(NAME)-$(version)-windows-$(ARCH).exe
 	zip $@ $? $(README)
 
-$(DIST)/$(version)-darwin-$(ARCH).tar.gz: $(BIN)/$(version)-darwin-$(ARCH)
+$(DIST)/$(NAME)-$(version)-darwin-$(ARCH).tar.gz: $(BIN)/$(NAME)-$(version)-darwin-$(ARCH)
 	tar -cvzf $@ $? $(README)
 
-$(DIST)/$(version)-linux-$(ARCH).tar.gz: $(BIN)/$(version)-linux-$(ARCH)
+$(DIST)/$(NAME)-$(version)-linux-$(ARCH).tar.gz: $(BIN)/$(NAME)-$(version)-linux-$(ARCH)
 	tar -cvzf $@ $? $(README)
 
-$(BIN)/$(version)-windows-$(ARCH).exe:
+$(BIN)/$(NAME)-$(version)-windows-$(ARCH).exe:
 	env GOOS=$(WINOS) GOARCH=$(ARCH) go build -v -o $@ $(PKG)
 
-$(BIN)/$(version)-darwin-$(ARCH):
+$(BIN)/$(NAME)-$(version)-darwin-$(ARCH):
 	env GOOS=$(MACOS) GOARCH=$(ARCH) go build -v -o $@ $(PKG)
 
-$(BIN)/$(version)-linux-$(ARCH):
+$(BIN)/$(NAME)-$(version)-linux-$(ARCH):
 	env GOOS=$(LNXOS) GOARCH=$(ARCH) go build -v -o $@ $(PKG)
