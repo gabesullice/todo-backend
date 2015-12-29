@@ -107,11 +107,12 @@ Notice that no `id` is specified as this will be assigned and then returned by
 the server.
 
 ## Persistence
-As of this writing, the app does not persist resources for longer than the
-lifetime of the server. Once the server is shut down, any added data will be
-lost. This should change in the near future.
+Todos are persisted using [BoltDB][boltdb]. When the app is started, a file
+named `todo.db` will be created. To erase all todos and start from scratch,
+simply remove this file with `rm todo.db`.
 
 [jsonapi]: https://github.com/shwoodard/jsonapi
 [httprouter]: https://github.com/julienschmidt/httprouter
 [jsonspec]: http://jsonapi.org/
 [jsoncreation]: http://jsonapi.org/format/#crud-creating
+[boltdb]: https://github.com/boltdb/bolt
