@@ -7,7 +7,7 @@ MACOS=darwin
 LNXOS=linux
 ARCH=amd64
 
-version=0.0.1
+version=0.0.2
 
 release: $(DIST)/$(version)-windows-$(ARCH).zip $(DIST)/$(version)-darwin-$(ARCH).tar.gz $(DIST)/$(version)-linux-$(ARCH).tar.gz
 
