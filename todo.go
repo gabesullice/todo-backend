@@ -138,8 +138,8 @@ func saveTodo(todo *Todo) error {
 
 func Headers(inner http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.Header().Set("Content-Type", "application/vnd.api+json")
+		w.Header().Set("Content-Type", "application/vnd.api+json; charset=UTF-8")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		inner(w, r)
 		w.Header().Write(w)
 	})
