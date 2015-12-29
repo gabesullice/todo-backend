@@ -80,7 +80,7 @@ func ListTodos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusFound)
+	w.WriteHeader(http.StatusOK)
 
 	if err := jsonapi.MarshalManyPayload(w, todos); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -141,7 +141,6 @@ func Headers(inner http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/vnd.api+json; charset=UTF-8")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		inner(w, r)
-		w.Header().Write(w)
 	})
 }
 
