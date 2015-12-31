@@ -12,7 +12,7 @@ ARCH=amd64
 
 README=README.md
 
-version=0.1.1
+version=0.2.0
 
 release: $(DIST)/$(NAME)-$(version)-windows-$(ARCH).zip $(DIST)/$(NAME)-$(version)-darwin-$(ARCH).tar.gz $(DIST)/$(NAME)-$(version)-linux-$(ARCH).tar.gz
 

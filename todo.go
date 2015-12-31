@@ -10,6 +10,7 @@ import (
 	"github.com/shwoodard/jsonapi"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -24,6 +25,12 @@ type Todo struct {
 	Title string `json:"title" jsonapi:"attr,title"`
 	Body  string `json:"body" jsonapi:"attr,body"`
 	Done  bool   `json:"done" jsonapi:"attr,done"`
+}
+
+type Route struct {
+	Method  string
+	Path    string
+	Handler http.HandlerFunc
 }
 
 func init() {
@@ -43,12 +50,39 @@ func main() {
 	})
 
 	r := httprouter.New()
-	r.HandlerFunc("POST", "/todos", Logger(Headers(AddTodo), "AddTodo"))
-	r.HandlerFunc("GET", "/todos", Logger(Headers(ListTodos), "ListTodos"))
+	addRoutes(r)
 
 	log.Printf("Awaiting connections on port %s ...", listen)
-
 	log.Fatal("ListenAndServe: ", http.ListenAndServe(":"+listen, r))
+}
+
+func addRoutes(r *httprouter.Router) {
+	routes := map[string]Route{
+		"AddTodo": {
+			Method:  "POST",
+			Path:    "/todos",
+			Handler: AddTodo,
+		},
+		"ListTodos": {
+			Method:  "GET",
+			Path:    "/todos",
+			Handler: ListTodos,
+		},
+	}
+
+	options := make(map[string][]string)
+	for name, route := range routes {
+		r.HandlerFunc(route.Method, route.Path, Logger(Headers(route.Handler), name))
+		options[route.Path] = append(options[route.Path], route.Method)
+	}
+
+	for path, methods := range options {
+		methods = append(methods, "OPTIONS")
+		r.HandlerFunc("OPTIONS", path, http.HandlerFunc(Logger(Headers(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ", "))
+			w.WriteHeader(http.StatusOK)
+		}), "Options("+path+")")))
+	}
 }
 
 func AddTodo(w http.ResponseWriter, r *http.Request) {
@@ -151,7 +185,7 @@ func Logger(inner http.HandlerFunc, name string) http.HandlerFunc {
 		inner(w, r)
 
 		log.Printf(
-			"%-15s%-15s%-15s%s",
+			"%-15s%-15s%-30s%s",
 			r.RequestURI,
 			r.Method,
 			name,
