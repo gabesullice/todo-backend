@@ -80,6 +80,7 @@ func addRoutes(r *httprouter.Router) {
 		methods = append(methods, "OPTIONS")
 		r.HandlerFunc("OPTIONS", path, http.HandlerFunc(Logger(Headers(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ", "))
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 			w.WriteHeader(http.StatusOK)
 		}), "Options("+path+")")))
 	}
