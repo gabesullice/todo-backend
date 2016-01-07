@@ -1,6 +1,8 @@
 language: go
+
 go:
-- 1.6beta1
+  - 1.6beta1
+
 env:
   global:
   - BUILD_GOARCH=amd64
@@ -8,12 +10,13 @@ env:
   - BUILD_GOOS=darwin
   - BUILD_GOOS=windows
   - BUILD_GOOS=linux
+
 script:
-- go env
-- go get -t -v ./...
-- go test -v ./...
-- GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH go env
-- GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH make releases
+  - go env
+  - go get -t -v ./...
+  - go test -v ./...
+  - GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH go env
+  - GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH make releases
 
 deploy:
   provider: releases
@@ -23,4 +26,3 @@ deploy:
   file_glob: true
   on:
     tags: true
-    #repo: gabesullice/todo-backend
