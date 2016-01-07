@@ -1,10 +1,9 @@
 language: go
 
 go:
-  - 1.6
+  - 1.5
 
 env:
-  - GOOS=darwin
-  - GOOS=windows
-  - GOOS=linux
-  - GOARCH=amd64
+  - GO15VENDOREXPERIMENT=1 GOOS=darwin GOARCH=amd64
+  - GO15VENDOREXPERIMENT=1 GOOS=windows GOARCH=amd64
+  - GO15VENDOREXPERIMENT=1 GOOS=linux GOARCH=amd64
