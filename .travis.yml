@@ -1,0 +1,10 @@
+language: go
+
+go:
+  - 1.6
+
+env:
+  - GOOS=darwin
+  - GOOS=windows
+  - GOOS=linux
+  - GOARCH=amd64
