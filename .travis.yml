@@ -11,5 +11,12 @@ env:
     - GOOS=windows
     - GOOS=linux
 
-after_success:
-  - go build -v -o "./dist/todo-backend-$TRAVIS_BRANCH.$GOARCH" github.com/gabesullice/todo-backend
+script:
+  - go env
+  - go get -t -v ./...
+  - go test -v ./...
+  - go build -v -o $(printf 'build/todo-backend-%s.%s' $TRAVIS_BRANCH $GOARCH) github.com/gabesullice/todo-backend
+  - echo $(printf 'dist/todo-backend-%s.%s' $TRAVIS_BRANCH $GOARCH)
+  - cp README.md $(printf 'dist/todo-backend-%s.%s/' $TRAVIS_BRANCH $GOARCH)
+  - mv $(printf 'build/todo-backend-%s.%s' $TRAVIS_BRANCH $GOARCH) $(printf 'dist/todo-backend-%s.%s/' $TRAVIS_BRANCH $GOARCH)
+  - tar -cvzf $(printf 'dist/todo-backend-%s.%s.tar.gz' $TRAVIS_BRANCH $GOARCH) $(printf 'dist/todo-backend-%s.%s' $TRAVIS_BRANCH $GOARCH)
