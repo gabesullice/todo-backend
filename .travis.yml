@@ -5,18 +5,15 @@ go:
 
 env:
   global:
-    - GOARCH=amd64
+    - BUILD_GOARCH=amd64
   matrix:
-    - GOOS=darwin
-    - GOOS=windows
-    - GOOS=linux
+    - BUILD_GOOS=darwin
+    - BUILD_GOOS=windows
+    - BUILD_GOOS=linux
 
 script:
   - go env
   - go get -t -v ./...
   - go test -v ./...
-  - go build -v -o $(printf 'build/todo-backend-%s.%s' $TRAVIS_BRANCH $GOARCH) github.com/gabesullice/todo-backend
-  - echo $(printf 'dist/todo-backend-%s.%s' $TRAVIS_BRANCH $GOARCH)
-  - cp README.md $(printf 'dist/todo-backend-%s.%s/' $TRAVIS_BRANCH $GOARCH)
-  - mv $(printf 'build/todo-backend-%s.%s' $TRAVIS_BRANCH $GOARCH) $(printf 'dist/todo-backend-%s.%s/' $TRAVIS_BRANCH $GOARCH)
-  - tar -cvzf $(printf 'dist/todo-backend-%s.%s.tar.gz' $TRAVIS_BRANCH $GOARCH) $(printf 'dist/todo-backend-%s.%s' $TRAVIS_BRANCH $GOARCH)
+  - GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH go env
+  - GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH make releases
