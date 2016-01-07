@@ -1,0 +1,21 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"path": "github.com/boltdb/bolt",
+			"revision": "827f56dfb2091be2edb284ffb6113c198f27b033",
+			"revisionTime": "2015-12-14T09:52:45-07:00"
+		},
+		{
+			"path": "github.com/julienschmidt/httprouter",
+			"revision": "f30ab90cccbd5171771d26b6557d3c2f49e047a6",
+			"revisionTime": "2015-12-04T08:14:43+01:00"
+		},
+		{
+			"path": "github.com/shwoodard/jsonapi",
+			"revision": "ae3568a7b25d3cb17d4d17c75d7b90daa52f34b6",
+			"revisionTime": "2015-10-28T10:15:22-07:00"
+		}
+	]
+}
