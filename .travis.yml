@@ -1,28 +1,26 @@
 language: go
-
 go:
-  - 1.6beta1
-
+- 1.6beta1
 env:
   global:
-    - BUILD_GOARCH=amd64
+  - BUILD_GOARCH=amd64
   matrix:
-    - BUILD_GOOS=darwin
-    - BUILD_GOOS=windows
-    - BUILD_GOOS=linux
-
+  - BUILD_GOOS=darwin
+  - BUILD_GOOS=windows
+  - BUILD_GOOS=linux
 script:
-  - go env
-  - go get -t -v ./...
-  - go test -v ./...
-  - GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH go env
-  - GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH make releases
+- go env
+- go get -t -v ./...
+- go test -v ./...
+- GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH go env
+- GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH make releases
 
 deploy:
   provider: releases
-  api_key: "90fb7aadfb4eacf28ad40308433300a719a4201b"
-  file: 
-    - dist/*.tar.gz
-  skip_cleanup: true
+  api_key:
+    secure: Pr5/GRSw/YqseggLHzn1pZDDB0O5eo/DeR3UCsATCgs/uGyBYexupTLC/PxzOrYei4krcMIYY4b/dqkh50uf6lGB6u9/DemGHIE0JQSxjgiaHBQwOvvAUgow95DeKH/KjxJzFMek0PQznHFlK2rcU/S0wwkaiIEpdR3VZYxGh3W8NXeO/NdRY15BbEiTzhz1vPR9qHiF8XmotfsdHxqIYCZpvAzuKBuG5PfoebI0qVxW5z0nEtquDMkpeCFEj5avMtWWaFPMjMdRwcZ8b8o3F4rOcN8Uu1YilVlTsZ4miWVGFfJJAkKUBJqluvXhtG5Gj47tILs/D5a0FjghmsID6DLh905cMFEzxY3f/6X1IbpaAHWM2oN+yIcGgz1DZCzmZXwpS6+Ucb5hJGYgxZvwA8m4OSBC79htfRWinJDjeY20CwOaNlrt/kewOvnqKbPklx3rciDUlmFtUQD2nXOD/vsHg/lWF5efox8JUn90w+epBfWi5pya1xbDEvi6rBnQWnqstSocH/xdBp/mx0mME47K4Lr72u8rjRAnwfTMscj7PATLxAqVy6AISCfwJUEkLtzPIhpoctGzez3cfnXvGquo27x9A1SK+1lPqTRgBufEA26ireWHw/fBymTHTU5isdt5HNThimvhmoHoq/PXBhv7iBlinbqSEhMW0HOy50Q=
+  file: dist/*.tar.gz
+  file_glob: true
   on:
+    repo: gabesullice/todo-backend
     tags: true
