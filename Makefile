@@ -12,27 +12,25 @@ ARCH=amd64
 
 README=README.md
 
-version=0.2.1
-
-release: $(DIST)/$(NAME)-$(version)-windows-$(ARCH).zip $(DIST)/$(NAME)-$(version)-darwin-$(ARCH).tar.gz $(DIST)/$(NAME)-$(version)-linux-$(ARCH).tar.gz
+release: $(DIST)/$(NAME)-$(TODO_VERSION)-windows-$(ARCH).zip $(DIST)/$(NAME)-$(TODO_VERSION)-darwin-$(ARCH).tar.gz $(DIST)/$(NAME)-$(TODO_VERSION)-linux-$(ARCH).tar.gz
 
 clean:
 	rm -rf {$(BIN),$(DIST)}/*
 
-$(DIST)/$(NAME)-$(version)-windows-$(ARCH).zip: $(BIN)/$(NAME)-$(version)-windows-$(ARCH).exe
+$(DIST)/$(NAME)-$(TODO_VERSION)-windows-$(ARCH).zip: $(BIN)/$(NAME)-$(TODO_VERSION)-windows-$(ARCH).exe
 	zip $@ $? $(README)
 
-$(DIST)/$(NAME)-$(version)-darwin-$(ARCH).tar.gz: $(BIN)/$(NAME)-$(version)-darwin-$(ARCH)
+$(DIST)/$(NAME)-$(TODO_VERSION)-darwin-$(ARCH).tar.gz: $(BIN)/$(NAME)-$(TODO_VERSION)-darwin-$(ARCH)
 	tar -cvzf $@ $? $(README)
 
-$(DIST)/$(NAME)-$(version)-linux-$(ARCH).tar.gz: $(BIN)/$(NAME)-$(version)-linux-$(ARCH)
+$(DIST)/$(NAME)-$(TODO_VERSION)-linux-$(ARCH).tar.gz: $(BIN)/$(NAME)-$(TODO_VERSION)-linux-$(ARCH)
 	tar -cvzf $@ $? $(README)
 
-$(BIN)/$(NAME)-$(version)-windows-$(ARCH).exe:
+$(BIN)/$(NAME)-$(TODO_VERSION)-windows-$(ARCH).exe:
 	env GOOS=$(WINOS) GOARCH=$(ARCH) go build -v -o $@ $(PKG)
 
-$(BIN)/$(NAME)-$(version)-darwin-$(ARCH):
+$(BIN)/$(NAME)-$(TODO_VERSION)-darwin-$(ARCH):
 	env GOOS=$(MACOS) GOARCH=$(ARCH) go build -v -o $@ $(PKG)
 
-$(BIN)/$(NAME)-$(version)-linux-$(ARCH):
+$(BIN)/$(NAME)-$(TODO_VERSION)-linux-$(ARCH):
 	env GOOS=$(LNXOS) GOARCH=$(ARCH) go build -v -o $@ $(PKG)
