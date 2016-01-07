@@ -4,6 +4,12 @@ go:
   - 1.6beta1
 
 env:
-  - GOOS=darwin GOARCH=amd64
-  - GOOS=windows GOARCH=amd64
-  - GOOS=linux GOARCH=amd64
+  global:
+    - GOARCH=amd64
+  matrix:
+    - GOOS=darwin
+    - GOOS=windows
+    - GOOS=linux
+
+after_success:
+  - go build -v -o "./dist/todo-backend-$TRAVIS_BRANCH.$GOARCH" github.com/gabesullice/todo-backend
