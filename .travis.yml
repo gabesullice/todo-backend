@@ -22,5 +22,5 @@ deploy:
   file: dist/*.tar.gz
   file_glob: true
   on:
-    repo: gabesullice/todo-backend
     tags: true
+    #repo: gabesullice/todo-backend
