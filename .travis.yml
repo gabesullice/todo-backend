@@ -17,3 +17,12 @@ script:
   - go test -v ./...
   - GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH go env
   - GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH make releases
+
+deploy:
+  provider: releases
+  api_key: "90fb7aadfb4eacf28ad40308433300a719a4201b"
+  file: 
+    - dist/*.tar.gz
+  skip_cleanup: true
+  on:
+    tags: true
