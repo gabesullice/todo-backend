@@ -10,6 +10,7 @@ import (
 	"github.com/shwoodard/jsonapi"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -30,7 +31,7 @@ type Todo struct {
 type Route struct {
 	Method  string
 	Path    string
-	Handler http.HandlerFunc
+	Handler httprouter.Handle
 }
 
 func init() {
@@ -68,25 +69,47 @@ func addRoutes(r *httprouter.Router) {
 			Path:    "/todos",
 			Handler: ListTodos,
 		},
+		"DeleteTodos": {
+			Method:  "DELETE",
+			Path:    "/todos/:id",
+			Handler: DeleteTodo,
+		},
 	}
 
 	options := make(map[string][]string)
 	for name, route := range routes {
-		r.HandlerFunc(route.Method, route.Path, Logger(Headers(route.Handler), name))
+		r.Handle(route.Method, route.Path, Logger(Headers(route.Handler), name))
 		options[route.Path] = append(options[route.Path], route.Method)
 	}
 
 	for path, methods := range options {
 		methods = append(methods, "OPTIONS")
-		r.HandlerFunc("OPTIONS", path, http.HandlerFunc(Logger(Headers(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ", "))
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-			w.WriteHeader(http.StatusOK)
-		}), "Options("+path+")")))
+		r.Handle("OPTIONS", path, httprouter.Handle(Logger(Headers(
+			func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+				w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ", "))
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+				w.WriteHeader(http.StatusOK)
+			},
+		), "Options("+path+")")))
 	}
 }
 
-func AddTodo(w http.ResponseWriter, r *http.Request) {
+func DeleteTodo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id, err := strconv.Atoi(p.ByName("id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := removeTodo(id); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func AddTodo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	todo := new(Todo)
 
 	if err := jsonapi.UnmarshalPayload(r.Body, todo); err != nil {
@@ -107,7 +130,7 @@ func AddTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ListTodos(w http.ResponseWriter, r *http.Request) {
+func ListTodos(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	todos, err := getTodos()
 	if err != nil {
 		log.Printf("Getting todos: %s", err.Error())
@@ -146,6 +169,19 @@ func getTodos() ([]interface{}, error) {
 	return todos, err
 }
 
+func removeTodo(id int) error {
+	return transaction(func(db *bolt.DB) error {
+		return db.Update(func(tx *bolt.Tx) error {
+			// Retrieve the users bucket.
+			// This should be created when the DB is first opened.
+			b := tx.Bucket([]byte("todos"))
+
+			// Persist bytes to users bucket.
+			return b.Delete(itob(id))
+		})
+	})
+}
+
 func saveTodo(todo *Todo) error {
 	return transaction(func(db *bolt.DB) error {
 		return db.Update(func(tx *bolt.Tx) error {
@@ -171,28 +207,32 @@ func saveTodo(todo *Todo) error {
 	})
 }
 
-func Headers(inner http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/vnd.api+json; charset=UTF-8")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		inner(w, r)
-	})
+func Headers(inner httprouter.Handle) httprouter.Handle {
+	return httprouter.Handle(
+		func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+			w.Header().Set("Content-Type", "application/vnd.api+json; charset=UTF-8")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			inner(w, r, p)
+		},
+	)
 }
 
-func Logger(inner http.HandlerFunc, name string) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
+func Logger(inner httprouter.Handle, name string) httprouter.Handle {
+	return httprouter.Handle(
+		func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+			start := time.Now()
 
-		inner(w, r)
+			inner(w, r, p)
 
-		log.Printf(
-			"%-15s%-15s%-30s%s",
-			r.RequestURI,
-			r.Method,
-			name,
-			time.Since(start),
-		)
-	})
+			log.Printf(
+				"%-15s%-15s%-30s%s",
+				r.RequestURI,
+				r.Method,
+				name,
+				time.Since(start),
+			)
+		},
+	)
 }
 
 func transaction(tx func(*bolt.DB) error) error {

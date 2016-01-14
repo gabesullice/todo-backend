@@ -8,6 +8,7 @@ Todo Backend
   - [Formatting](#formatting)
   - [Fetching Data](#fetching-data)
   - [Sending Data](#sending-data)
+  - [Removing Data](#removing-data)
 - [Persistence](#persistence)
 
 ## Overview
@@ -102,6 +103,9 @@ for [creating][jsoncreation] a new resource. That may look something like this:
   }
 }
 ```
+
+### Removing Data
+A `DELETE` request is simple. Send a `DELETE` request to `/todos/:id` where id is the id of the todo you want to delete.
 
 Notice that no `id` is specified as this will be assigned and then returned by
 the server.
